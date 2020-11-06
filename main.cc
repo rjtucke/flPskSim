@@ -6,6 +6,9 @@
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Light_Button.H>
+#include "include/Panel.h"
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Text_Editor.H>
 
 void Quit_CB(Fl_Widget *, void *) {
     exit(0);
@@ -51,9 +54,42 @@ int main(int argc, char **argv) {
     Fl_Group *RigControlFrame = new Fl_Group(0,TopFrame1->y(), (int)fl_wcwidth("9")*10+3, 2*1+3*(24+1));
       { // RigControlFrame 1
         RigControlFrame->box(FL_FLAT_BOX);
+        // Skipping these widgets for now
       }
-  }
+    RigControlFrame->end();
 
+    int Y = RigControlFrame->y()+2*1+3*(24+1);
+    Fl_Group *center_group = new Fl_Group(0, Y, 800, 120);
+    center_group->box(FL_FLAT_BOX);
+    Fl_Group *text_group = new Fl_Group(0, Y, center_group->w(), center_group->h());
+    text_group->box(FL_FLAT_BOX);
+    Panel *text_panel = new Panel(0, Y, center_group->w(), center_group->h());
+    text_panel->box(FL_FLAT_BOX);
+    Fl_Group *mvgroup = new Fl_Group(text_panel->x(), text_panel->y(),
+                                text_panel->w()/2, 120, "");
+    Fl_Hold_Browser *mainViewer = new Fl_Hold_Browser(mvgroup->x(), mvgroup->y(), mvgroup->w(), mvgroup->h()-42, "");    
+    mainViewer->box(FL_DOWN_BOX);
+    mainViewer->has_scrollbar(Fl_Browser_::VERTICAL);
+    mvgroup->end();
+    int save_mvx = mvgroup->w();
+    int rh = 0.5 * text_panel->h();
+
+    Fl_Text_Editor *ReceiveText = new Fl_Text_Editor(
+                                        text_panel->x()+mvgroup->w(), text_panel->y(),
+                                        text_panel->w()-mvgroup->w(), rh, "");
+    // Skipping FHdisp
+    
+    Fl_Text_Editor *TransmitText = new Fl_Text_Editor(
+                                        text_panel->x()+mvgroup->w(), text_panel->y()+ReceiveText->h(),
+                                        text_panel->w()-mvgroup->w(), text_panel->h()-ReceiveText->h());
+    TransmitText->align(FL_ALIGN_CLIP);
+    // Skipping minbox
+    text_panel->end();
+    text_group->end();
+
+                            
+
+  }
 
     fl_digi_main->end();
     fl_digi_main->show(argc, argv);
